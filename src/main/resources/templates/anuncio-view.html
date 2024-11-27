@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Anuncios</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        /* Reset básico de márgenes y rellenos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* Cabecera */
+        header {
+            text-align: center;
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            font-size: 28px;
+            border-radius: 10px;
+        }
+
+        /* Estilos del menú de navegación */
+        nav {
+            background-color: #2c3e50;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #3498db;
+        }
+
+        /* Estilo para los anuncios */
+        #anuncios {
+            padding: 30px;
+        }
+
+        #anuncios ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #anuncios li {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        /* Estilo para las imágenes */
+        .carousel-inner img {
+            width: 100%;
+            max-height: 400px; /* Limita la altura de las imágenes */
+            object-fit: cover; /* Asegura que las imágenes se ajusten bien */
+        }
+
+        /* Estilos para las acciones */
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .actions a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .actions a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilo para los textos del carrusel */
+        .carousel-caption h5 {
+            font-size: 16px; /* Tamaño del título */
+            color: #ffffff; /* Color del título */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Sombra sutil para el título */
+        }
+
+        .carousel-caption p {
+            font-size: 14px; /* Tamaño del texto */
+            color: #ffffff; /* Color del texto de la descripción */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Sombra sutil para la descripción */
+        }
+
+        /* Estilo para los datos del usuario */
+        .user-info {
+            margin-top: 30px;
+            margin-bottom: 30px; /* Separación con el resto del contenido */
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ddd; /* Añadir un borde sutil */
+        }
+
+        .user-info h2 {
+            margin-bottom: 20px;
+            font-size: 26px;
+            color: #2c3e50;
+        }
+
+        .user-card {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-card p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .user-card i {
+            color: #3498db;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Cabecera -->
+<header>
+    CATALOGO DE ANUNCIOS
+</header>
+
+<!-- Menú de navegación -->
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Anuncios</a></li>
+        <th:block sec:authorize="isAuthenticated()">
+            <li><a th:href="@{/misanuncios}">Mis anuncios</a></li>
+        </th:block>
+        <li><a th:href="@{/login}">Iniciar sesión</a></li>
+    </ul>
+</nav>
+
+<!-- Información del usuario -->
+<div class="container mt-4 user-info">
+    <h2>Bienvenido, <span th:text="${usuario.nombre}"></span></h2>
+
+    <!-- Tarjeta con los datos del usuario -->
+    <div class="user-card">
+        <p><i class="bi bi-envelope-fill"></i><span th:text="${usuario.email}"></span></p>
+        <p><i class="bi bi-person-fill"></i><span th:text="${usuario.nombre}"></span></p>
+        <p><i class="bi bi-house-door-fill"></i><span th:text="${usuario.poblacion}"></span></p>
+        <p><i class="bi bi-telephone-fill"></i><span th:text="${'+34 ' + usuario.telefono}"></span></p>
+    </div>
+</div>
+
+<!-- Contenido de los anuncios -->
+<div id="anuncios" class="container">
+    <ul>
+        <li>
+            <h3 th:text="${anuncio.titulo}"></h3>
+            <p th:text="${anuncio.precio}"></p>
+
+            <!-- Carrusel de imágenes -->
+            <div id="carouselExampleCaptions" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                <ol class="carousel-indicators">
+                    <!-- Cada imagen del carrusel tiene un indicador -->
+                    <li th:each="foto, iterStat : ${anuncio.fotos}" data-bs-target="#carouselExampleCaptions"
+                        th:data-bs-slide-to="${iterStat.index}"
+                        th:classappend="${iterStat.index == 0 ? ' active' : ''}"></li>
+                </ol>
+                <div class="carousel-inner">
+                    <!-- Cada imagen en el carrusel -->
+                    <div th:each="foto, iterStat : ${anuncio.fotos}" class="carousel-item"
+                         th:classappend="${iterStat.index == 0 ? ' active' : ''}">
+                        <img th:src="@{'/imagesAnuncios/' + ${foto.nombre}}" alt="Imagen del anuncio">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5 th:text="${anuncio.titulo}"></h5>
+                            <p th:text="${anuncio.descripcion}"></p><br>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <div class="actions">
+                <form th:action="@{/anuncios/del/{id}(id=${anuncio.id})}" method="post">
+                    <input type="submit" value="Borrar" class="btn btn-danger">
+                </form>
+                <a th:href="@{/anuncios/edit/{id}(id=${anuncio.id})}" class="btn btn-primary">Editar</a>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<!-- Enlace para insertar un nuevo anuncio -->
+<div class="text-center">
+    <a class="btn btn-primary" th:href="@{/anuncios/new}">Insertar Anuncio</a>
+</div>
+
+<!-- Bootstrap Bundle JS (incluye Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
